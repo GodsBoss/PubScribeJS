@@ -49,3 +49,21 @@ describe "Event bus", ()->
 		bus.publish "foo"
 
 		expect(notified).toEqual [true, true]
+
+	it "does not notify clients about events they did not subscribe to.", ()->
+
+		notified = [false, false]
+
+		notify1 = ()->
+			notified[0] = true
+
+		notify2 = ()->
+			notified[1] = true
+
+		bus = new EventBus
+
+		bus.subscribe "foo", notify1
+		bus.subscribe "bar", notify2
+		bus.publish "foo"
+
+		expect(notified).toEqual [true, false]

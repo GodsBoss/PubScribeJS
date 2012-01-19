@@ -1,13 +1,15 @@
 class EventBus
 
 	constructor:()->
-		subscribers = []
+		subscribers = {}
 
 		@publish = (type, args...)->
-			for subscriber in subscribers
+			for subscriber in subscribers[type] or {}
 				subscriber()
 
 		@subscribe = (type, callback)->
-			subscribers.push callback
+			if not subscribers[type]
+				subscribers[type] = []
+			subscribers[type].push callback
 
 exports.EventBus = EventBus
