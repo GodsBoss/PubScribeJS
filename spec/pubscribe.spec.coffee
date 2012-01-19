@@ -95,3 +95,17 @@ describe "Event bus", ()->
 		bus.publish "bar"
 
 		expect(calls).toEqual 1
+
+	it "lets subscribers unsubscribe from events.", ()->
+
+		called = false
+
+		notify = ()->
+			called = true
+
+		bus = new EventBus
+		bus.subscribe "baz", notify
+		bus.unsubscribe "baz", notify
+		bus.publish "baz"
+
+		expect(called).toBeFalsy()

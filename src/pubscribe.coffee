@@ -15,4 +15,11 @@ class EventBus
 					return
 			subscribers[type].push callback
 
+		@unsubscribe = (type, callback)->
+			for subscriber, index in subscribers[type] or {}
+				if subscriber == callback
+					subscribers[type][index] = subscribers[0]
+					subscribers[type].shift()
+					return
+
 exports.EventBus = EventBus
