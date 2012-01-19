@@ -67,3 +67,17 @@ describe "Event bus", ()->
 		bus.publish "foo"
 
 		expect(notified).toEqual [true, false]
+
+	it "passes arguments to subscribers.", ()->
+
+		publishedArgs = [8, "bar", true]
+		argsSubscribersAreCalledWith = undefined
+
+		callback = (args...)->
+			argsSubscribersAreCalledWith = args
+
+		bus = new EventBus
+		bus.subscribe "foo", callback
+		bus.publish.apply null, ["foo"].concat publishedArgs
+
+		expect(argsSubscribersAreCalledWith).toEqual publishedArgs
