@@ -10,6 +10,9 @@ class EventBus
 		@subscribe = (type, callback)->
 			if not subscribers[type]
 				subscribers[type] = []
+			for subscriber in subscribers[type]
+				if subscriber == callback
+					return
 			subscribers[type].push callback
 
 exports.EventBus = EventBus

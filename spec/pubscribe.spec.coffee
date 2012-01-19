@@ -81,3 +81,17 @@ describe "Event bus", ()->
 		bus.publish.apply null, ["foo"].concat publishedArgs
 
 		expect(argsSubscribersAreCalledWith).toEqual publishedArgs
+
+	it "prevents multi-subscribers from being called multiple times.", ()->
+
+		calls = 0
+
+		notify = ()->
+			calls++
+
+		bus = new EventBus
+		bus.subscribe "bar", notify
+		bus.subscribe "bar", notify
+		bus.publish "bar"
+
+		expect(calls).toEqual 1
