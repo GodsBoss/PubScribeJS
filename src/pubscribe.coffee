@@ -1,12 +1,13 @@
 class EventBus
 
 	constructor:()->
-		subscriber = ()->
+		subscribers = []
 
 		@publish = (type, args...)->
-			subscriber()
+			for subscriber in subscribers
+				subscriber()
 
 		@subscribe = (type, callback)->
-			subscriber = callback
+			subscribers.push callback
 
 exports.EventBus = EventBus
