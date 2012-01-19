@@ -17,3 +17,16 @@ describe "Event bus", ()->
 
 		bus = new EventBus
 		bus.subscribe "foo", ()->
+
+	it "notifies clients of events they subscribed to.", ()->
+
+		notified = false
+
+		notify = ()->
+			notified = true
+
+		bus = new EventBus
+		bus.subscribe "foo", notify
+		bus.publish "foo"
+
+		expect(notified).toBeTruthy()
