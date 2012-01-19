@@ -12,3 +12,8 @@ describe "Event bus", ()->
 
 		bus = new EventBus
 		bus.publish "foo", ()->
+
+	it "lets client subscribe to events.", ()->
+
+		bus = new EventBus
+		bus.subscribe "foo", ()->
