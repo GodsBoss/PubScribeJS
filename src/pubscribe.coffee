@@ -35,10 +35,11 @@ class FilteredEventBus
 
 		@publish = (args...)->
 			throwIfTypeIsNotValid args[0]
-			bus.publish.apply bus args
+			bus.publish.apply bus, args
 
 		@subscribe = (type, callback)->
 			throwIfTypeIsNotValid type
+			bus.subscribe type, callback
 
 		@unsubscribe = (type, callback)->
 			throwIfTypeIsNotValid type

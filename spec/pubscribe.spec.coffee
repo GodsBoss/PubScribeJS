@@ -146,3 +146,19 @@ describe "Filtered event bus", ()->
 			bus.unsubscribe "bar", ()->
 
 		expect(unsubscribeFromUnknownEventType).toThrow "Invalid event type"
+
+	it "publishes valid events to all subscribers.", ()->
+
+		notified = [false, false]
+
+		notify1 = ()->
+			notified[0] = true
+
+		notify2 = ()->
+			notified[1] = true
+
+		bus.subscribe "foo", notify1
+		bus.subscribe "foo", notify2
+		bus.publish "foo"
+
+		expect(notified).toEqual [true, true]
