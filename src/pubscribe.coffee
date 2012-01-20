@@ -5,7 +5,9 @@ class EventBus
 
 		@publish = (type, args...)->
 			for subscriber in subscribers[type] or {}
-				subscriber.apply null, args
+				try
+					subscriber.apply null, args
+				catch e
 
 		@subscribe = (type, callback)->
 			if not subscribers[type]

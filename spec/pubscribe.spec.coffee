@@ -109,3 +109,22 @@ describe "Event bus", ()->
 		bus.publish "baz"
 
 		expect(called).toBeFalsy()
+
+	it "ignores exceptions thrown by subscribers.", ()->
+
+		called = false
+
+		throwingSubscriber = ()->
+			throw new Error("I am an error!")
+
+		notify = ()->
+			called = true
+
+		bus = new EventBus
+		bus.subscribe "bar", throwingSubscriber
+		bus.subscribe "bar", notify
+
+		publish = ()->
+			bus.publish "bar"
+
+		expect(publish).not.toThrow "I am an error!"
