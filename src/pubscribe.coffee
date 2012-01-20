@@ -71,6 +71,9 @@ addMethods = (bus, type)->
 		bus.publish.apply bus, [type].concat args
 
 exports.EventBus = EventBus
+
+exports.FilteredEventBus = FilteredEventBus
+
 exports.create = (args...)->
 	if args.length == 0
 		new EventBus
