@@ -33,3 +33,12 @@ the lone property `x` with the value `5` (and all properties inherited from
 
 Removes the callback from the list of subscribers for `"foo"`. It will no
 longer be called when a `"foo"` event takes place.
+
+*** Restrict to certain event types ***
+
+    var bus = pubsub.create("foo", "bar");
+
+If created this way, the bus will only accept the event types `"foo"` and
+`"bar"` and throws an error on any other event types (e.g. `"baz"`). This
+applies to subscribing, unsubscribing and publishing. For valid events,
+everything works as expected.
