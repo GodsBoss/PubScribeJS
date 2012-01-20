@@ -42,3 +42,24 @@ If created this way, the bus will only accept the event types `"foo"` and
 `"bar"` and throws an error on any other event types (e.g. `"baz"`). This
 applies to subscribing, unsubscribing and publishing. For valid events,
 everything works as expected.
+
+*** Use additional methods directly ***
+
+If the event bus is restricted to certain event types, additional methods will
+be created which can be used instead of the generic ones.
+
+    var bus = pubsub.create("clicked button");
+
+    bus.subscribeToClickedButton(callback);
+		bus.unsubscribeFromClickedButton(callback);
+		bus.publishClickedButton();
+
+Event type name parts can be separated by spaces, hyphens or underscores.
+
+Beware! If two event type names will be converted to the same method name, one
+will overwrite the other. Example:
+
+    var bus = pubsub.create("foo bar", "foo_bar");
+
+Although these are two distinct event types, there are only methods for one of
+them.
