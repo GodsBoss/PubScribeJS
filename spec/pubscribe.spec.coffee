@@ -4,18 +4,19 @@ EventBus = pubsub.EventBus
 
 describe "Event bus", ()->
 
-	it "is easily constructed.", ()->
+	bus = null
 
+	beforeEach ()->
 		bus = new EventBus
+
+	it "is easily constructed.", ()->
 
 	it "lets clients publish events.", ()->
 
-		bus = new EventBus
 		bus.publish "foo", ()->
 
 	it "lets client subscribe to events.", ()->
 
-		bus = new EventBus
 		bus.subscribe "foo", ()->
 
 	it "notifies a client of events they subscribed to.", ()->
@@ -25,7 +26,6 @@ describe "Event bus", ()->
 		notify = ()->
 			notified = true
 
-		bus = new EventBus
 		bus.subscribe "foo", notify
 		bus.publish "foo"
 
@@ -40,8 +40,6 @@ describe "Event bus", ()->
 
 		notify2 = ()->
 			notified[1] = true
-
-		bus = new EventBus
 
 		bus.subscribe "foo", notify1
 		bus.subscribe "foo", notify2
@@ -60,8 +58,6 @@ describe "Event bus", ()->
 		notify2 = ()->
 			notified[1] = true
 
-		bus = new EventBus
-
 		bus.subscribe "foo", notify1
 		bus.subscribe "bar", notify2
 		bus.publish "foo"
@@ -76,7 +72,6 @@ describe "Event bus", ()->
 		callback = (args...)->
 			argsSubscribersAreCalledWith = args
 
-		bus = new EventBus
 		bus.subscribe "foo", callback
 		bus.publish.apply null, ["foo"].concat publishedArgs
 
@@ -89,7 +84,6 @@ describe "Event bus", ()->
 		notify = ()->
 			calls++
 
-		bus = new EventBus
 		bus.subscribe "bar", notify
 		bus.subscribe "bar", notify
 		bus.publish "bar"
@@ -103,7 +97,6 @@ describe "Event bus", ()->
 		notify = ()->
 			called = true
 
-		bus = new EventBus
 		bus.subscribe "baz", notify
 		bus.unsubscribe "baz", notify
 		bus.publish "baz"
@@ -120,7 +113,6 @@ describe "Event bus", ()->
 		notify = ()->
 			called = true
 
-		bus = new EventBus
 		bus.subscribe "bar", throwingSubscriber
 		bus.subscribe "bar", notify
 
