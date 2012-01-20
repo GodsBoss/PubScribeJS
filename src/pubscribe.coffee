@@ -24,6 +24,22 @@ class EventBus
 					subscribers[type].shift()
 					return
 
+class FilteredEventBus
+
+	constructor:(bus, types)->
+		throwIfTypeIsNotValid = (type)->
+			for oneOfTheValidTypes in types
+				if type is oneOfTheValidTypes
+					return
+			throw new Error "Invalid event type"
+
+		@publish = (args...)->
+			throwIfTypeIsNotValid args[0]
+			bus.publish.apply bus args
+
 exports.EventBus = EventBus
-exports.create = ()->
-	new EventBus
+exports.create = (args...)->
+	if args.length == 0
+		new EventBus
+	else
+		new FilteredEventBus (new EventBus), args

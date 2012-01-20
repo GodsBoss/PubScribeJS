@@ -1,6 +1,6 @@
 pubsub = require "../src/pubscribe"
 
-describe "Event bus", ()->
+describe "Simple Event bus", ()->
 
 	bus = null
 
@@ -118,3 +118,14 @@ describe "Event bus", ()->
 			bus.publish "bar"
 
 		expect(publish).not.toThrow "I am an error!"
+
+describe "Filtered event bus", ()->
+
+	it "does not allow non-existent events to be published.", ()->
+
+		bus = pubsub.create "foo"
+
+		publishInvalidEvent = ()->
+			bus.publish "bar"
+
+		expect(publishInvalidEvent).toThrow "Invalid event type"
