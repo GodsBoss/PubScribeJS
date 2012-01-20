@@ -9,7 +9,11 @@ Usage
 
 *** Simple usage ***
 
-    var bus = new EventBus();
+    var pubsub = require('path/to/pubscribe.js');
+
+Include the module.
+
+		var bus = pubsub.create();
 
 Creates a new event bus.
 

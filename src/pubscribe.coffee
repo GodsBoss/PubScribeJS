@@ -25,3 +25,5 @@ class EventBus
 					return
 
 exports.EventBus = EventBus
+exports.create = ()->
+	new EventBus

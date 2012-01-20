@@ -1,13 +1,11 @@
 pubsub = require "../src/pubscribe"
 
-EventBus = pubsub.EventBus
-
 describe "Event bus", ()->
 
 	bus = null
 
 	beforeEach ()->
-		bus = new EventBus
+		bus = pubsub.create()
 
 	it "is easily constructed.", ()->
 
