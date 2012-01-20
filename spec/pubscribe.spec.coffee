@@ -121,9 +121,12 @@ describe "Simple Event bus", ()->
 
 describe "Filtered event bus", ()->
 
-	it "does not allow non-existent events to be published.", ()->
+	bus = null
 
+	beforeEach ()->
 		bus = pubsub.create "foo"
+
+	it "does not allow non-existent events to be published.", ()->
 
 		publishInvalidEvent = ()->
 			bus.publish "bar"
@@ -132,16 +135,12 @@ describe "Filtered event bus", ()->
 
 	it "does not allow subscription to non-existent events.", ()->
 
-		bus = pubsub.create "foo"
-
 		subscribeToUnknownEventType = ()->
 			bus.subscribe "bar", ()->
 
 		expect(subscribeToUnknownEventType).toThrow "Invalid event type"
 
 	it "does not allow unsubscribing from non-existent events.", ()->
-
-		bus = pubsub.create "foo"
 
 		unsubscribeFromUnknownEventType = ()->
 			bus.unsubscribe "bar", ()->
