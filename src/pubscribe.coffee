@@ -8,6 +8,7 @@ class EventBus
 				try
 					subscriber.apply null, args
 				catch e
+			@
 
 		@subscribe = (type, callback)->
 			if not subscribers[type]
@@ -16,6 +17,7 @@ class EventBus
 				if subscriber == callback
 					return
 			subscribers[type].push callback
+			@
 
 		@unsubscribe = (type, callback)->
 			for subscriber, index in subscribers[type] or {}
@@ -23,6 +25,7 @@ class EventBus
 					subscribers[type][index] = subscribers[0]
 					subscribers[type].shift()
 					return
+			@
 
 class FilteredEventBus
 
@@ -36,14 +39,17 @@ class FilteredEventBus
 		@publish = (args...)->
 			throwIfTypeIsNotValid args[0]
 			bus.publish.apply bus, args
+			@
 
 		@subscribe = (type, callback)->
 			throwIfTypeIsNotValid type
 			bus.subscribe type, callback
+			@
 
 		@unsubscribe = (type, callback)->
 			throwIfTypeIsNotValid type
 			bus.unsubscribe type, callback
+			@
 
 separatorRegExp = new RegExp " |_|-"
 

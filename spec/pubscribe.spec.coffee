@@ -119,6 +119,12 @@ describe "Simple Event bus", ()->
 
 		expect(publish).not.toThrow "I am an error!"
 
+	it "is chainable.", ()->
+
+		expect(bus.publish "foo").toEqual bus
+		expect(bus.subscribe "foo", ()->).toEqual bus
+		expect(bus.unsubscribe "foo", ()->).toEqual bus
+
 describe "Filtered event bus", ()->
 
 	bus = null
@@ -220,3 +226,9 @@ describe "Filtered event bus", ()->
 			unsubscribeFromAllTypes()
 
 		expect(usingConvenienceMethods).not.toThrow()
+
+	it "is chainable.", ()->
+
+		expect(bus.publish "foo").toEqual bus
+		expect(bus.subscribe "foo", ()->).toEqual bus
+		expect(bus.unsubscribe "foo", ()->).toEqual bus
