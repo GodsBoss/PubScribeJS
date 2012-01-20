@@ -175,3 +175,20 @@ describe "Filtered event bus", ()->
 		bus.publish "foo"
 
 		expect(notified).toBeFalsy()
+
+	it "Creates additional convenience methods.", ()->
+
+		notified = [false, false]
+
+		notify1 = (args...)->
+			notified[0] = args
+
+		notify2 = (args...)->
+			notified[1] = args
+
+		bus.subscribeToFoo notify1
+		bus.subscribeToFoo notify2
+		bus.unsubscribeFromFoo notify1
+		bus.publishFoo 4, true, "yes"
+
+		expect(notified).toEqual [false, [4, true, "yes"]]

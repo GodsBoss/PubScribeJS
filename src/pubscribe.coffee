@@ -45,9 +45,24 @@ class FilteredEventBus
 			throwIfTypeIsNotValid type
 			bus.unsubscribe type, callback
 
+camelize = (string)->
+	string.substring(0, 1).toUpperCase() + string.substring 1
+
+addMethods = (bus, type)->
+	camelName = camelize type
+	bus['subscribeTo'+camelName] = (callback)->
+		bus.subscribe type, callback
+	bus['unsubscribeFrom'+camelName] = (callback)->
+		bus.unsubscribe type, callback
+	bus['publish'+camelName] = (args...)->
+		bus.publish.apply bus, [type].concat args
+
 exports.EventBus = EventBus
 exports.create = (args...)->
 	if args.length == 0
 		new EventBus
 	else
-		new FilteredEventBus (new EventBus), args
+		bus = new FilteredEventBus (new EventBus), args
+		for eventType in args
+			addMethods bus, eventType
+		bus
