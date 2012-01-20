@@ -192,3 +192,31 @@ describe "Filtered event bus", ()->
 		bus.publishFoo 4, true, "yes"
 
 		expect(notified).toEqual [false, [4, true, "yes"]]
+
+	it "'s convenience methods are camelized versions of the event types.", ()->
+
+		types = ["type with spaces", "use_underscores", "with-hyphens"]
+
+		bus = pubsub.create.apply pubsub, types
+
+		publishAllTypes = ()->
+			bus.publishTypeWithSpaces()
+			bus.publishUseUnderscores()
+			bus.publishWithHyphens()
+
+		subscribeToAllTypes = ()->
+			bus.subscribeToTypeWithSpaces ()->
+			bus.subscribeToUseUnderscores ()->
+			bus.subscribeToWithHyphens ()->
+
+		unsubscribeFromAllTypes = ()->
+			bus.unsubscribeFromTypeWithSpaces ()->
+			bus.unsubscribeFromUseUnderscores ()->
+			bus.unsubscribeFromWithHyphens ()->
+
+		usingConvenienceMethods = ()->
+			publishAllTypes()
+			subscribeToAllTypes()
+			unsubscribeFromAllTypes()
+
+		expect(usingConvenienceMethods).not.toThrow()

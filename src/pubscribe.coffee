@@ -46,7 +46,10 @@ class FilteredEventBus
 			bus.unsubscribe type, callback
 
 camelize = (string)->
-	string.substring(0, 1).toUpperCase() + string.substring 1
+	parts = string.split new RegExp " |_|-"
+	upcasedParts = parts.map (part)->
+		part.substring(0, 1).toUpperCase() + part.substring 1
+	upcasedParts.join ""
 
 addMethods = (bus, type)->
 	camelName = camelize type
