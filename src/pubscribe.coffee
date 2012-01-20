@@ -45,10 +45,14 @@ class FilteredEventBus
 			throwIfTypeIsNotValid type
 			bus.unsubscribe type, callback
 
+separatorRegExp = new RegExp " |_|-"
+
+upcaseFirstChar = (string)->
+	string.substring(0, 1).toUpperCase() + string.substring 1
+
 camelize = (string)->
-	parts = string.split new RegExp " |_|-"
-	upcasedParts = parts.map (part)->
-		part.substring(0, 1).toUpperCase() + part.substring 1
+	parts = string.split separatorRegExp
+	upcasedParts = parts.map upcaseFirstChar
 	upcasedParts.join ""
 
 addMethods = (bus, type)->
