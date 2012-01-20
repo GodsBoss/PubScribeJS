@@ -43,6 +43,7 @@ class FilteredEventBus
 
 		@unsubscribe = (type, callback)->
 			throwIfTypeIsNotValid type
+			bus.unsubscribe type, callback
 
 exports.EventBus = EventBus
 exports.create = (args...)->

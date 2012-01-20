@@ -162,3 +162,16 @@ describe "Filtered event bus", ()->
 		bus.publish "foo"
 
 		expect(notified).toEqual [true, true]
+
+	it "publishes no events to subscribers which unsubscribed.", ()->
+
+		notified = false
+
+		notify = ()->
+			notified = true
+
+		bus.subscribe "foo", notify
+		bus.unsubscribe "foo", notify
+		bus.publish "foo"
+
+		expect(notified).toBeFalsy()
