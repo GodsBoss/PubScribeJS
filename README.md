@@ -15,7 +15,7 @@ Include the module:
 
 Creates a new event bus:
 
-		var bus = pubsub.create();
+    var bus = pubsub.create();
 
 Subscribes callback to `"foo"` events. If `"foo"` events take place, the
 callback will be notified:
@@ -51,8 +51,8 @@ be created which can be used instead of the generic ones.
     var bus = pubsub.create("clicked button");
 
     bus.subscribeToClickedButton(callback);
-		bus.unsubscribeFromClickedButton(callback);
-		bus.publishClickedButton();
+    bus.unsubscribeFromClickedButton(callback);
+    bus.publishClickedButton();
 
 Event type name parts can be separated by spaces, hyphens or underscores.
 
