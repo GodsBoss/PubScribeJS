@@ -37,6 +37,12 @@ class FilteredEventBus
 			throwIfTypeIsNotValid args[0]
 			bus.publish.apply bus args
 
+		@subscribe = (type, callback)->
+			throwIfTypeIsNotValid type
+
+		@unsubscribe = (type, callback)->
+			throwIfTypeIsNotValid type
+
 exports.EventBus = EventBus
 exports.create = (args...)->
 	if args.length == 0

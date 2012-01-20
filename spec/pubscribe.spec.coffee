@@ -129,3 +129,21 @@ describe "Filtered event bus", ()->
 			bus.publish "bar"
 
 		expect(publishInvalidEvent).toThrow "Invalid event type"
+
+	it "does not allow subscription to non-existent events.", ()->
+
+		bus = pubsub.create "foo"
+
+		subscribeToUnknownEventType = ()->
+			bus.subscribe "bar", ()->
+
+		expect(subscribeToUnknownEventType).toThrow "Invalid event type"
+
+	it "does not allow unsubscribing from non-existent events.", ()->
+
+		bus = pubsub.create "foo"
+
+		unsubscribeFromUnknownEventType = ()->
+			bus.unsubscribe "bar", ()->
+
+		expect(unsubscribeFromUnknownEventType).toThrow "Invalid event type"
