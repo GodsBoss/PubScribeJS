@@ -15,10 +15,13 @@ class Callback
 
 bus = null
 
-describe "Simple Event bus", ()->
+includeCommonBusFeatures = ()->
 
-	beforeEach ()->
-		bus = pubscribe.create()
+	it "is chainable", ()->
+
+		expect(bus.publish "foo").toEqual bus
+		expect(bus.subscribe "foo", ()->).toEqual bus
+		expect(bus.unsubscribe "foo", ()->).toEqual bus
 
 	it "notifies all clients of events they subscribed to.", ()->
 
@@ -31,18 +34,6 @@ describe "Simple Event bus", ()->
 		bus.publish "foo"
 
 		expect(aCallback.wasCalled() and anotherCallback.wasCalled()).toBeTruthy()
-
-	it "does not notify clients about events they did not subscribe to.", ()->
-
-		fooSubscriber = new Callback
-		barSubscriber = new Callback
-
-		bus.subscribe "foo", fooSubscriber.call
-		bus.subscribe "bar", barSubscriber.call
-		bus.publish "foo"
-
-		expect(fooSubscriber.wasCalled()).toBeTruthy()
-		expect(barSubscriber.wasCalled()).toBeFalsy()
 
 	it "passes arguments to subscribers.", ()->
 
@@ -58,9 +49,9 @@ describe "Simple Event bus", ()->
 
 		subscriber = new Callback
 
-		bus.subscribe "bar", subscriber.call
-		bus.subscribe "bar", subscriber.call
-		bus.publish "bar"
+		bus.subscribe "foo", subscriber.call
+		bus.subscribe "foo", subscriber.call
+		bus.publish "foo"
 
 		expect(subscriber.numberOfCalls()).toEqual 1
 
@@ -68,9 +59,9 @@ describe "Simple Event bus", ()->
 
 		subscriber = new Callback
 
-		bus.subscribe "baz", subscriber.call
-		bus.unsubscribe "baz", subscriber.call
-		bus.publish "baz"
+		bus.subscribe "foo", subscriber.call
+		bus.unsubscribe "foo", subscriber.call
+		bus.publish "foo"
 
 		expect(subscriber.wasCalled()).toBeFalsy()
 
@@ -81,24 +72,39 @@ describe "Simple Event bus", ()->
 		throwingSubscriber = ()->
 			throw new Error("I am an error!")
 
-		bus.subscribe "bar", throwingSubscriber
-		bus.subscribe "bar", subscriber.call
+		bus.subscribe "foo", throwingSubscriber
+		bus.subscribe "foo", subscriber.call
 
 		publish = ()->
-			bus.publish "bar"
+			bus.publish "foo"
 
 		expect(publish).not.toThrow "I am an error!"
 
-	it "is chainable.", ()->
+describe "Simple Event bus", ()->
 
-		expect(bus.publish "foo").toEqual bus
-		expect(bus.subscribe "foo", ()->).toEqual bus
-		expect(bus.unsubscribe "foo", ()->).toEqual bus
+	beforeEach ()->
+		bus = pubscribe.create()
+
+	includeCommonBusFeatures()
+
+	it "does not notify clients about events they did not subscribe to.", ()->
+
+		fooSubscriber = new Callback
+		barSubscriber = new Callback
+
+		bus.subscribe "foo", fooSubscriber.call
+		bus.subscribe "bar", barSubscriber.call
+		bus.publish "foo"
+
+		expect(fooSubscriber.wasCalled()).toBeTruthy()
+		expect(barSubscriber.wasCalled()).toBeFalsy()
 
 describe "Filtered event bus", ()->
 
 	beforeEach ()->
 		bus = pubscribe.create "foo"
+
+	includeCommonBusFeatures()
 
 	it "does not allow non-existent events to be published.", ()->
 
@@ -120,27 +126,6 @@ describe "Filtered event bus", ()->
 			bus.unsubscribe "bar", ()->
 
 		expect(unsubscribeFromUnknownEventType).toThrow "Invalid event type"
-
-	it "publishes valid events to all subscribers.", ()->
-
-		aSubscriber = new Callback
-		anotherSubscriber = new Callback
-
-		bus.subscribe "foo", aSubscriber.call
-		bus.subscribe "foo", anotherSubscriber.call
-		bus.publish "foo"
-
-		expect(aSubscriber.wasCalled() and anotherSubscriber.wasCalled()).toBeTruthy()
-
-	it "publishes no events to subscribers which unsubscribed.", ()->
-
-		callback = new Callback
-
-		bus.subscribe "foo", callback.call
-		bus.unsubscribe "foo", callback.call
-		bus.publish "foo"
-
-		expect(callback.wasCalled()).toBeFalsy()
 
 	it "Creates additional convenience methods.", ()->
 
@@ -182,9 +167,3 @@ describe "Filtered event bus", ()->
 			unsubscribeFromAllTypes()
 
 		expect(usingConvenienceMethods).not.toThrow()
-
-	it "is chainable.", ()->
-
-		expect(bus.publish "foo").toEqual bus
-		expect(bus.subscribe "foo", ()->).toEqual bus
-		expect(bus.unsubscribe "foo", ()->).toEqual bus
