@@ -20,15 +20,6 @@ describe "Simple Event bus", ()->
 	beforeEach ()->
 		bus = pubscribe.create()
 
-	it "notifies a client of events they subscribed to.", ()->
-
-		callback = new Callback
-
-		bus.subscribe "foo", callback.call
-		bus.publish "foo"
-
-		expect(callback.wasCalled()).toBeTruthy()
-
 	it "notifies all clients of events they subscribed to.", ()->
 
 		aCallback = new Callback
