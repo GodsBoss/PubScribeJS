@@ -11,29 +11,23 @@ class EventBus
 			@
 
 		@subscribe = (type, callback)->
-			if not subscribers[type]
-				subscribers[type] = []
-			for subscriber in subscribers[type]
-				if subscriber == callback
-					return @
+			subscribers[type] ?= []
+			return @ for subscriber in subscribers[type] when subscriber is callback
 			subscribers[type].push callback
 			@
 
 		@unsubscribe = (type, callback)->
-			for subscriber, index in subscribers[type] or {}
-				if subscriber == callback
-					subscribers[type][index] = subscribers[type][0]
-					subscribers[type].shift()
-					return @
+			for subscriber, index in subscribers[type] or {} when subscriber is callback
+				subscribers[type][index] = subscribers[type][0]
+				subscribers[type].shift()
+				return @
 			@
 
 class FilteredEventBus
 
 	constructor:(bus, types)->
 		throwIfTypeIsNotValid = (type)->
-			for oneOfTheValidTypes in types
-				if type is oneOfTheValidTypes
-					return
+			return for oneOfTheValidTypes in types when type is oneOfTheValidTypes
 			throw new Error "Invalid event type"
 
 		@publish = (args...)->
@@ -79,6 +73,5 @@ exports.create = (args...)->
 		new EventBus
 	else
 		bus = new FilteredEventBus (new EventBus), args
-		for eventType in args
-			addMethods bus, eventType
+		addMethods bus, eventType for eventType in args
 		bus
