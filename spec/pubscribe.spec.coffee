@@ -20,16 +20,6 @@ describe "Simple Event bus", ()->
 	beforeEach ()->
 		bus = pubscribe.create()
 
-	it "is easily constructed.", ()->
-
-	it "lets clients publish events.", ()->
-
-		bus.publish "foo", ()->
-
-	it "lets client subscribe to events.", ()->
-
-		bus.subscribe "foo", ()->
-
 	it "notifies a client of events they subscribed to.", ()->
 
 		callback = new Callback
