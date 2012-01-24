@@ -1,4 +1,4 @@
-pubsub = require "../src/pubscribe"
+pubscribe = require "../src/pubscribe"
 
 class Callback
 	constructor:()->
@@ -18,7 +18,7 @@ describe "Simple Event bus", ()->
 	bus = null
 
 	beforeEach ()->
-		bus = pubsub.create()
+		bus = pubscribe.create()
 
 	it "is easily constructed.", ()->
 
@@ -119,7 +119,7 @@ describe "Filtered event bus", ()->
 	bus = null
 
 	beforeEach ()->
-		bus = pubsub.create "foo"
+		bus = pubscribe.create "foo"
 
 	it "does not allow non-existent events to be published.", ()->
 
@@ -180,7 +180,7 @@ describe "Filtered event bus", ()->
 
 		types = ["type with spaces", "use_underscores", "with-hyphens"]
 
-		bus = pubsub.create.apply pubsub, types
+		bus = pubscribe.create.apply pubscribe, types
 
 		publishAllTypes = ()->
 			bus.publishTypeWithSpaces()
