@@ -1,5 +1,18 @@
 pubsub = require "../src/pubscribe"
 
+class Callback
+	constructor:()->
+		@callArgumentsStack = []
+
+	call:(args...)=>
+		@callArgumentsStack.push args
+
+	numberOfCalls:()->
+		@callArgumentsStack.length
+
+	wasCalled:()->
+		@numberOfCalls() > 0
+
 describe "Simple Event bus", ()->
 
 	bus = null
@@ -19,100 +32,76 @@ describe "Simple Event bus", ()->
 
 	it "notifies a client of events they subscribed to.", ()->
 
-		notified = false
+		callback = new Callback
 
-		notify = ()->
-			notified = true
-
-		bus.subscribe "foo", notify
+		bus.subscribe "foo", callback.call
 		bus.publish "foo"
 
-		expect(notified).toBeTruthy()
+		expect(callback.wasCalled()).toBeTruthy()
 
 	it "notifies all clients of events they subscribed to.", ()->
 
-		notified = [false, false]
+		aCallback = new Callback
+		anotherCallback = new Callback
 
-		notify1 = ()->
-			notified[0] = true
-
-		notify2 = ()->
-			notified[1] = true
-
-		bus.subscribe "foo", notify1
-		bus.subscribe "foo", notify2
+		bus.subscribe "foo", aCallback.call
+		bus.subscribe "foo", anotherCallback.call
 
 		bus.publish "foo"
 
-		expect(notified).toEqual [true, true]
+		expect(aCallback.wasCalled() and anotherCallback.wasCalled()).toBeTruthy()
 
 	it "does not notify clients about events they did not subscribe to.", ()->
 
-		notified = [false, false]
+		fooSubscriber = new Callback
+		barSubscriber = new Callback
 
-		notify1 = ()->
-			notified[0] = true
-
-		notify2 = ()->
-			notified[1] = true
-
-		bus.subscribe "foo", notify1
-		bus.subscribe "bar", notify2
+		bus.subscribe "foo", fooSubscriber.call
+		bus.subscribe "bar", barSubscriber.call
 		bus.publish "foo"
 
-		expect(notified).toEqual [true, false]
+		expect(fooSubscriber.wasCalled()).toBeTruthy()
+		expect(barSubscriber.wasCalled()).toBeFalsy()
 
 	it "passes arguments to subscribers.", ()->
 
 		publishedArgs = [8, "bar", true]
-		argsSubscribersAreCalledWith = undefined
+		subscriber = new Callback
 
-		callback = (args...)->
-			argsSubscribersAreCalledWith = args
-
-		bus.subscribe "foo", callback
+		bus.subscribe "foo", subscriber.call
 		bus.publish.apply null, ["foo"].concat publishedArgs
 
-		expect(argsSubscribersAreCalledWith).toEqual publishedArgs
+		expect(subscriber.callArgumentsStack[0]).toEqual publishedArgs
 
 	it "prevents multi-subscribers from being called multiple times.", ()->
 
-		calls = 0
+		subscriber = new Callback
 
-		notify = ()->
-			calls++
-
-		bus.subscribe "bar", notify
-		bus.subscribe "bar", notify
+		bus.subscribe "bar", subscriber.call
+		bus.subscribe "bar", subscriber.call
 		bus.publish "bar"
 
-		expect(calls).toEqual 1
+		expect(subscriber.numberOfCalls()).toEqual 1
 
 	it "lets subscribers unsubscribe from events.", ()->
 
-		called = false
+		subscriber = new Callback
 
-		notify = ()->
-			called = true
-
-		bus.subscribe "baz", notify
-		bus.unsubscribe "baz", notify
+		bus.subscribe "baz", subscriber.call
+		bus.unsubscribe "baz", subscriber.call
 		bus.publish "baz"
 
-		expect(called).toBeFalsy()
+		expect(subscriber.wasCalled()).toBeFalsy()
 
 	it "ignores exceptions thrown by subscribers.", ()->
 
-		called = false
+		subscriber = new Callback
 
 		throwingSubscriber = ()->
 			throw new Error("I am an error!")
 
-		notify = ()->
-			called = true
-
 		bus.subscribe "bar", throwingSubscriber
-		bus.subscribe "bar", notify
+		bus.subscribe "bar", subscriber.call
 
 		publish = ()->
 			bus.publish "bar"
@@ -155,49 +144,37 @@ describe "Filtered event bus", ()->
 
 	it "publishes valid events to all subscribers.", ()->
 
-		notified = [false, false]
+		aSubscriber = new Callback
+		anotherSubscriber = new Callback
 
-		notify1 = ()->
-			notified[0] = true
-
-		notify2 = ()->
-			notified[1] = true
-
-		bus.subscribe "foo", notify1
-		bus.subscribe "foo", notify2
+		bus.subscribe "foo", aSubscriber.call
+		bus.subscribe "foo", anotherSubscriber.call
 		bus.publish "foo"
 
-		expect(notified).toEqual [true, true]
+		expect(aSubscriber.wasCalled() and anotherSubscriber.wasCalled()).toBeTruthy()
 
 	it "publishes no events to subscribers which unsubscribed.", ()->
 
-		notified = false
+		callback = new Callback
 
-		notify = ()->
-			notified = true
-
-		bus.subscribe "foo", notify
-		bus.unsubscribe "foo", notify
+		bus.subscribe "foo", callback.call
+		bus.unsubscribe "foo", callback.call
 		bus.publish "foo"
 
-		expect(notified).toBeFalsy()
+		expect(callback.wasCalled()).toBeFalsy()
 
 	it "Creates additional convenience methods.", ()->
 
-		notified = [false, false]
+		subscriber = new Callback
+		unsubscriber = new Callback
 
-		notify1 = (args...)->
-			notified[0] = args
-
-		notify2 = (args...)->
-			notified[1] = args
-
-		bus.subscribeToFoo notify1
-		bus.subscribeToFoo notify2
-		bus.unsubscribeFromFoo notify1
+		bus.subscribeToFoo subscriber.call
+		bus.subscribeToFoo unsubscriber.call
+		bus.unsubscribeFromFoo unsubscriber.call
 		bus.publishFoo 4, true, "yes"
 
-		expect(notified).toEqual [false, [4, true, "yes"]]
+		expect(subscriber.callArgumentsStack[0]).toEqual [4, true, "yes"]
+		expect(unsubscriber.wasCalled()).toBeFalsy()
 
 	it "'s convenience methods are camelized versions of the event types.", ()->
 

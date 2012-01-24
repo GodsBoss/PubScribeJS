@@ -22,7 +22,7 @@ class EventBus
 		@unsubscribe = (type, callback)->
 			for subscriber, index in subscribers[type] or {}
 				if subscriber == callback
-					subscribers[type][index] = subscribers[0]
+					subscribers[type][index] = subscribers[type][0]
 					subscribers[type].shift()
 					return
 			@
