@@ -15,7 +15,7 @@ class EventBus
 				subscribers[type] = []
 			for subscriber in subscribers[type]
 				if subscriber == callback
-					return
+					return @
 			subscribers[type].push callback
 			@
 
@@ -24,7 +24,7 @@ class EventBus
 				if subscriber == callback
 					subscribers[type][index] = subscribers[type][0]
 					subscribers[type].shift()
-					return
+					return @
 			@
 
 class FilteredEventBus

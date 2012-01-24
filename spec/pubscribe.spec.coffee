@@ -19,9 +19,13 @@ includeCommonBusFeatures = ()->
 
 	it "is chainable", ()->
 
+		subscriber = new Callback
+
 		expect(bus.publish "foo").toEqual bus
-		expect(bus.subscribe "foo", ()->).toEqual bus
-		expect(bus.unsubscribe "foo", ()->).toEqual bus
+		expect(bus.subscribe "foo", subscriber).toEqual bus
+		expect(bus.subscribe "foo", subscriber).toEqual bus
+		expect(bus.unsubscribe "foo", subscriber).toEqual bus
+		expect(bus.unsubscribe "foo", subscriber).toEqual bus
 
 	it "notifies all clients of events they subscribed to.", ()->
 
