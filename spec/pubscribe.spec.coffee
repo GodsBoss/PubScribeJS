@@ -13,9 +13,9 @@ class Callback
 	wasCalled:()->
 		@numberOfCalls() > 0
 
-describe "Simple Event bus", ()->
+bus = null
 
-	bus = null
+describe "Simple Event bus", ()->
 
 	beforeEach ()->
 		bus = pubscribe.create()
@@ -96,8 +96,6 @@ describe "Simple Event bus", ()->
 		expect(bus.unsubscribe "foo", ()->).toEqual bus
 
 describe "Filtered event bus", ()->
-
-	bus = null
 
 	beforeEach ()->
 		bus = pubscribe.create "foo"
